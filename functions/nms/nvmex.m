@@ -7,7 +7,7 @@ function nvmex(cuFileName, outDir)
 if ispc % Windows
  Host_Compiler_Location = '-ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64"';
  CUDA_INC_Location = ['"' getenv('CUDA_PATH')  '\include"'];
-    CUDA_SAMPLES_Location =['"' getenv('NVCUDASAMPLES6_5_ROOT')  '\common\inc"'];
+    CUDA_SAMPLES_Location =['"' getenv('NVCUDASAMPLES9_0_ROOT')  '\common\inc"'];
     PIC_Option = '';
     if ( strcmp(computer('arch'),'win32') ==1)
         machine_str = ' --machine 32 ';
@@ -36,12 +36,12 @@ machine_str PIC_Option ...
 ' -I' CUDA_INC_Location ' -I' CUDA_SAMPLES_Location ...
 ' "' cuFileName '" ' 
  ];
-mexCommandLine = ['mex ' '-outdir ' outDir ' ' filename '.o'  ' -L' CUDA_LIB_Location  ' -lcudart'];
+mexCommandLine = ['mex ' '-outdir ' outDir ' LINKFLAGS="$LINKFLAGS /NODEFAULTLIB:MSVCRT" ' filename '.o'  ' -L' CUDA_LIB_Location  ' -lcudart'];
 disp(nvccCommandLine);
 warning off;
 status = system(nvccCommandLine);
 warning on;
-if status < 0
+if status ~= 0
  error 'Error invoking nvcc';
 end
 disp(mexCommandLine);
